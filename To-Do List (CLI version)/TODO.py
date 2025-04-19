@@ -19,13 +19,16 @@ def tasks():
 
 def add_task(tasks):
     task = input("Enter a task: ")
+    print('\n')
     tasks.update({task: 'in progress'})
     return tasks
 
 
 def view_tasks(tasks):
+    print("====================================")
     for index, task in enumerate(tasks):
-        print(f"[{index+1}] {task}")
+        print(f"[{index+1}] {task} | Status: {tasks[task]}")
+    print('====================================')
 
 
 def mark_as_done(tasks):
@@ -46,7 +49,7 @@ def mark_as_done(tasks):
 
 def delete_task(tasks):
     for i, v in enumerate(tasks):
-        print(f"[{i+1}] {v}")
+        print(f"[{i+1}] {v} | {tasks[v]}")
     which_task = int(input("Which task you want to delete? "))
     for i, v in enumerate(tasks):
         if which_task-1 == i:
@@ -60,7 +63,7 @@ tasks_dic = dict()
 while run_app:
     menu()
     choice = make_choice()
-    if choice not in [1, 2, 3, 4, 5]:
+    while choice not in [1, 2, 3, 4, 5]:
         print("wrong choice, choose again")
         choice = make_choice()
     if choice == 1:
