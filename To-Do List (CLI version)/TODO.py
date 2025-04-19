@@ -18,51 +18,47 @@ def tasks():
 
 
 def add_task(tasks):
-    task = input("Enter task: ")
-    tasks[task] = 'in progress'
+    task = input("Enter a task: ")
+    tasks.update({task: 'in progress'})
+    return tasks
 
 
 def view_tasks(tasks):
     for index, task in enumerate(tasks):
-        print("[", index, "]", task)
+        print(f"[{index+1}] {task}")
 
 
 def mark_as_done(tasks):
     i = 1
-    for k, v in tasks:
+    for k, v in tasks.items():
         if v == 'in progress':
             print(i, k)
             i += 1
     which_task = int(input("Which task you want to mark as done? "))
     i = 1
-    for k, v in tasks:
+    for k, v in tasks.items():
         if v == 'in progress':
             if which_task == i:
                 tasks[k] = 'done'
-            else:
-                i += 1
+            i += 1
+    return tasks
 
 
 def delete_task(tasks):
-    i = 1
-    for k, v in tasks:
-        if v == 'in progress':
-            print(i, k)
-            i += 1
+    for i, v in enumerate(tasks):
+        print(f"[{i+1}] {v}")
     which_task = int(input("Which task you want to delete? "))
-    i = 1
-    for k, v in tasks:
-        if v == 'in progress':
-            if which_task == i:
-                del tasks[k]
-            else:
-                i += 1
+    for i, v in enumerate(tasks):
+        if which_task-1 == i:
+            del tasks[v]
+            break
+    return tasks
 
 
 run_app = True
+tasks_dic = dict()
 while run_app:
     menu()
-    tasks_dic = tasks()
     choice = make_choice()
     if choice not in [1, 2, 3, 4, 5]:
         print("wrong choice, choose again")
