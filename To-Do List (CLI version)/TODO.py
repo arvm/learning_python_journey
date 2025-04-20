@@ -12,63 +12,88 @@ def menu():
 
 
 def make_choice():
-    choice = int(input("Enter choice: "))
-    return choice
-
-
-def tasks():
-    tasks = dict()
-    return tasks
+    while True:
+        try:
+            choice = int(input("Enter choice: "))
+            if choice in [1, 2, 3, 4, 5]:
+                return choice
+            else:
+                print("Please enter a number between 1 and 5.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
 
 
 def add_task(tasks):
     while True:
-        task = input("Enter a task (type done to stop): ")
+        task = input("Enter a task (type done to stop): ").strip()
         if task.lower() == 'done':
             break
-        tasks[task] = 'In Progress'
+        if not task:
+            print("Task cannot be empty.")
+        elif task in tasks:
+            print("Task already exists.")
+        else:
+            tasks[task] = 'In Progress'
     return tasks
-    # enter_task = True
-    # while enter_task:
-    #     task = input("Enter a task (type done to stop): ")
-    #     if task.lower() == 'done':
-    #         enter_task = False
-    #         continue
-    #     tasks.update({task: 'In Progress'})
-    # return tasks
 
 
 def view_tasks(tasks):
     print("====================================")
     for index, task in enumerate(tasks):
-        print(f"[{index+1}]- {tasks[task]} | {task}")
+        status_symbol = '✅' if tasks[task] == 'Done' else '❌'
+        print(f"[{index+1}]- {status_symbol} {task}")
+        # print(f"[{index+1}]- {tasks[task]} | {task}")
     print('====================================')
 
 
 def mark_as_done(tasks):
-    i = 1
-    for k, v in tasks.items():
-        if v == 'In Progress':
-            print(f"[{i}]- {k}")
-            i += 1
-    which_task = int(input("Which task you want to mark as done? "))
-    i = 1
-    for k, v in tasks.items():
-        if v == 'In Progress':
-            if which_task == i:
-                tasks[k] = 'Done'
-            i += 1
+    in_progress_tasks = [task for task,
+                         status in tasks.items() if status == 'In Progress']
+
+    if not in_progress_tasks:
+        print("No tasks to mark as done.")
+        return tasks
+
+    for i, task in enumerate(in_progress_tasks, 1):
+        print(f"[{i}] - {task}")
+
+    while True:
+        try:
+            choice = int(input("Which task do you want to mark as done? "))
+            if 1 <= choice <= len(in_progress_tasks):
+                tasks[in_progress_tasks[choice - 1]] = 'Done'
+                break
+            else:
+                print(
+                    f"Please enter a number between 1 and {len(in_progress_tasks)}.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
     return tasks
 
 
 def delete_task(tasks):
-    for i, v in enumerate(tasks):
-        print(f"[{i+1}]- {tasks[v]} | {v}")
-    which_task = int(input("Which task you want to delete? "))
-    for i, v in enumerate(tasks):
-        if which_task-1 == i:
-            del tasks[v]
-            break
+    if not tasks:
+        print("No tasks to delete.")
+        return tasks
+
+    task_list = list(tasks.keys())
+
+    for i, task in enumerate(task_list, 1):
+        status_symbol = '✅' if tasks[task] == 'Done' else '❌'
+        print(f"[{i}] - {status_symbol} | {task}")
+
+    while True:
+        try:
+            choice = int(input("Which task do you want to delete? "))
+            if 1 <= choice <= len(task_list):
+                del tasks[task_list[choice - 1]]
+                break
+            else:
+                print(f"Please enter a number between 1 and {len(task_list)}.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
     return tasks
 
 
@@ -90,21 +115,7 @@ def save_tasks(tasks, file_path):
     with open(file_path, 'w') as f:
         json.dump(tasks, f, indent=4)
 
-# def write_to_file(tasks, taskFile):
-#     tasks_list = list(tasks)
-#     for index, task in enumerate(tasks):
-#         if task not in tasks_list:
-#             tasks_list.append(task)
-#     with open(taskFile, 'a') as file:
-#         for index, task in enumerate(tasks):
-#             file.write(f"[{index+1}]- {tasks[task]} | {task}")
 
-
-# file_path = "./tasks.json"
-# TASKS_FILE = 'tasks.json'
-# run_app = True
-# tasks_dic = dict()
-# task_file = tasks_file(file_path)
 TASKS_FILE = 'tasks.json'
 
 run_app = True
@@ -114,9 +125,9 @@ tasks_dic = load_tasks(TASKS_FILE)
 while run_app:
     menu()
     choice = make_choice()
-    while choice not in [1, 2, 3, 4, 5]:
-        print("wrong choice, choose again")
-        choice = make_choice()
+    # while choice not in [1, 2, 3, 4, 5]:
+    #     print("wrong choice, choose again")
+    #     choice = make_choice()
     if choice == 1:
         add_task(tasks_dic)
         save_tasks(tasks_dic, TASKS_FILE)
